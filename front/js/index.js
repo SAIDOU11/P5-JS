@@ -1,53 +1,61 @@
+// FETCH QUI VA APPELER L'AJOUT DE PRODUIT
 const url = "http://localhost:3000/api/products";
 
 fetch(url)
   .then((response) => response.json())
   .then((data) => addProduct(data));
 
-function addProduct(dataProduct) {
-  const id = dataProduct[0]._id;
-  const imageUrl = dataProduct[0].imageUrl;
-  const altTxt = dataProduct[0].altTxt;
-  const name = dataProduct[0].name;
-  const description = dataProduct[0].description;
+// FONCTION AJOUT DE PRODUIT
+function addProduct(product) {
+  // CONSTANTES QUI VONT RÉCUPÉRER LES DONNÉES
+  // const id = dataProducts[0]._id;
+  // const imageUrl = dataProducts[0].imageUrl;
+  // const altTxt = dataProducts[0].altTxt;
+  // const name = dataProducts[0].name;
+  // const description = dataProducts[0].description;
 
-  const article = tagArticle();
-  const image = tagImage(imageUrl, altTxt);
-  const anchor = createAnchor(id);
-  const heading3 = tagH3(name);
-  const paragraph = tagParagraph(description);
+  console.log(product);
 
-  inChild(anchor);
-  anchor.appendChild(article);
+  // BOUCLE FOREACH
+  product.forEach((productNum) => {
+    console.log("Produit numéro : ", productNum);
 
-  article.appendChild(image);
-  article.appendChild(heading3);
-  article.appendChild(paragraph);
-  console.log(anchor);
+    const { _id, imageUrl, altTxt, name, description } = productNum;
+
+    // FONCTIONS APPELER (CRÉATION)
+    const anchor = createAnchor(_id);
+    const article = document.createElement("article");
+    const image = tagImage(imageUrl, altTxt);
+    const heading3 = tagH3(name);
+    const paragraph = tagParagraph(description);
+
+    // PARENT ID # DANS L'ANCRE <A>
+    parentId(anchor);
+    anchor.appendChild(article);
+
+    // AJOUT D'ENFANTS
+    article.appendChild(image);
+    article.appendChild(heading3);
+    article.appendChild(paragraph);
+  });
 }
 
+// Création de fonction qui sera appeler à la création de la balise <a>
 function createAnchor(id) {
   const anchor = document.createElement("a");
   anchor.href = "./product.html?id=" + id;
   return anchor;
 }
 
-function inChild(iC) {
+// Création de fonction qui sera appeler à la création du id #items
+function parentId(pI) {
   const items = document.querySelector("#items");
   if (items != null) {
-    items.appendChild(iC);
+    items.appendChild(pI);
   }
 }
 
-// Va fabriquer une balise <article>
-function tagArticle() {
-  const article = document.createElement("article");
-  const paragraph = tagParagraph();
-
-  return article;
-}
-
-// Va fabriquer une balise <img>
+// Va fabriquer une balise <img> à l'intérieur de son parent #
 function tagImage(imageUrl, altTxt) {
   const image = document.createElement("img");
   image.src = imageUrl;
@@ -55,7 +63,7 @@ function tagImage(imageUrl, altTxt) {
   return image;
 }
 
-// Va fabriquer une balise <h3>
+// Va fabriquer une balise <h3> et une classe "productName"
 function tagH3(name) {
   const heading3 = document.createElement("h3");
   heading3.textContent = name;
@@ -63,50 +71,10 @@ function tagH3(name) {
   return heading3;
 }
 
-// Va fabriquer une balise <p>
+// Va fabriquer une balise <p> et une classe "productDescription"
 function tagParagraph(description) {
   const paragraph = document.createElement("p");
   paragraph.textContent = description;
   paragraph.classList.add("productDescription");
   return paragraph;
 }
-
-/*
-
-  (index.js) - 
-  {
-    ligne 1 à 5 -
-
-      Appel fetch vers notre url des API - 
-
-      Va nous permettre de récupérer nos produits vers notre lien API -
-
-      On va vérifier le résultat attendu en se positionnant sur le bon post
-      et lancer le test pour voir notre liste sur le port 3000 -
-     }
-
-
-      {
-    ligne 7 à 11 -
-        Fonction Ajout de produit - 
-        Va nous permettre de récupérer le produit de notre choix dans le tableau
-      }
-
-
-      {
-    ligne 13 à 17 -
-      Fonction de createAnchor -
-      Va nous permettre de créer un élément  -
-      }
-
-
-      {
-    ligne 19 à 24 -
-      Fonction inChild
-      à l'intérieur de notre div #items notre fonction va placer la fonction createAnchor.
-      }
-
-
-
-    
-  */
