@@ -1,28 +1,23 @@
-// FETCH QUI VA APPELER L'AJOUT DE PRODUIT
-const url = "http://localhost:3000/api/products";
+/* FONCTION ASYNCHRONE VA RETOURNER LA PROMESSE 
+(AWAIT) VA ATTENDRE LA RESOLUTION DE LA PROMESSE FETCH SOIT ARRIVER AVANT D'AGIR
+*/
 
-fetch(url)
-  .then((response) => response.json())
-  .then((data) => addProduct(data));
+const loadData = async () => {
+  const url = "http://localhost:3000/api/products";
+  const res = await fetch(url).then();
+  const dataP = await res.json().then((data) => addProducts(data));
+};
+
+loadData();
 
 // FONCTION AJOUT DE PRODUIT
-function addProduct(product) {
-  // CONSTANTES QUI VONT RÉCUPÉRER LES DONNÉES
-  // const id = dataProducts[0]._id;
-  // const imageUrl = dataProducts[0].imageUrl;
-  // const altTxt = dataProducts[0].altTxt;
-  // const name = dataProducts[0].name;
-  // const description = dataProducts[0].description;
+function addProducts(allProducts) {
+  // BOUCLE FOREACH .. POUR CHAQUE PRODUIT ON VA EXERCER LA FONCTION
+  // POUR QUE TOUS LES ÉLÉMENTS DU TABLEAU SOIT AFFICHER DE LA MÊME MANIERE
+  allProducts.forEach((product) => {
+    const { _id, imageUrl, altTxt, name, description } = product;
 
-  console.log(product);
-
-  // BOUCLE FOREACH
-  product.forEach((productNum) => {
-    console.log("Produit numéro : ", productNum);
-
-    const { _id, imageUrl, altTxt, name, description } = productNum;
-
-    // FONCTIONS APPELER (CRÉATION)
+    // // FONCTIONS APPELER POUR LA CRÉATION DU DIV DE CHAQUE BALISE
     const anchor = createAnchor(_id);
     const article = document.createElement("article");
     const image = tagImage(imageUrl, altTxt);
@@ -55,7 +50,7 @@ function parentId(pI) {
   }
 }
 
-// Va fabriquer une balise <img> à l'intérieur de son parent #
+// Fonction qui va fabriquer une balise <img> à l'intérieur de son parent #
 function tagImage(imageUrl, altTxt) {
   const image = document.createElement("img");
   image.src = imageUrl;
@@ -63,7 +58,7 @@ function tagImage(imageUrl, altTxt) {
   return image;
 }
 
-// Va fabriquer une balise <h3> et une classe "productName"
+// Fonction qui va fabriquer une balise <h3> et une classe "productName"
 function tagH3(name) {
   const heading3 = document.createElement("h3");
   heading3.textContent = name;
@@ -71,7 +66,7 @@ function tagH3(name) {
   return heading3;
 }
 
-// Va fabriquer une balise <p> et une classe "productDescription"
+// Fonction qui va fabriquer une balise <p> et une classe "productDescription"
 function tagParagraph(description) {
   const paragraph = document.createElement("p");
   paragraph.textContent = description;
