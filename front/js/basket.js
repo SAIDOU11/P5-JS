@@ -11,7 +11,7 @@ function saveBasket(basket) {
   localStorage.setItem("basket", JSON.stringify(basket));
 }
 
-// JSON.stringify ça va transformer quelque chose de complèxe comme un tableau où objet en chaine de caractère.
+// JSON.stringify ça va transformer quelque chose de complèxe comme un tableau où un objet en chaine de caractère.
 
 function getBasket() {
   let basket = localStorage.getItem("basket");

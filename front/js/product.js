@@ -2,19 +2,29 @@ const linkSearch = window.location.search;
 const urlParams = new URLSearchParams(linkSearch);
 const productId = urlParams.get("id");
 
+// CONDITIONS DE VARIABLE (PORTÉE GLOBALE) POUR STOCKER DANS LE LOCAL STORAGE
+if (productId != null) {
+  var valuePrice = 0;
+  var iURL = "";
+  var altTEXT = "";
+}
+
 // FONCTION FETCH POUR FAIRE UNE REQUETE AUX SERVEURS QUI VA RETOURNER LES INFORMATIONS DE L'API
 fetch(`http://localhost:3000/api/products/${productId}`)
   .then((response) => response.json())
   .then((res) => addData(res));
 
-// FONCTION AJOUT DE DONNÉES.. NOS FONCTIONS SERONT REGROUPER À l'INTERIEUR DE CETTE FONCTION
+// FONCTION AJOUT DE DONNÉES..
 
 // RÉCUPÉRATION DE DONNÉES À l'INTERIEUR LA CONSTANTE (LOGO)
 function addData(logo) {
   const { altTxt, colors, description, imageUrl, name, price } = logo;
+  altTEXT = altTxt;
+  iURL = imageUrl;
   tagImage(imageUrl, altTxt);
   nameTitle(name);
   spanPrice(price);
+  valuePrice = price;
   tagParagraph(description);
   chooseColors(colors);
 }
@@ -25,36 +35,65 @@ function tagImage(imageUrl, altTxt) {
   image.src = imageUrl;
   image.alt = altTxt;
   const parent = document.querySelector(".item__img");
-  if (parent != null) parent.appendChild(image);
+  parent.appendChild(image);
 }
 
 // FONCTION AJOUT DE TITRE DANS LE DIV #TITLE
 function nameTitle(name) {
   const h1 = document.querySelector("#title");
-  if (h1 != null) h1.textContent = name;
+  h1.textContent = name;
 }
 
 // FONCTION AJOUT Du PRIX DANS LA BALISE SPAN
 function spanPrice(price) {
   const span = document.querySelector("#price");
-  if (span != null) span.textContent = price;
+  span.textContent = price;
 }
 
 // FONCTION AJOUT DE LA DESCRIPTION DANS LA BALISE P
 function tagParagraph(description) {
   const paragraph = document.querySelector("#description");
-  if (paragraph != null) paragraph.textContent = description;
+  paragraph.textContent = description;
 }
 
 // FONCTION QUI VA PERMETTRE DE CHOISIR ENTRE TROIS DIFFÉRENTES COULEURS DE CANAPÉ
-// BOUCLE FOREACH POUR CREER L'OPTION AFIN DE CHOISIR ENTRE UNE DES COULEURS
 function chooseColors(colors) {
   const choice = document.querySelector("#colors");
-  if (choice != null)
-    colors.forEach((color) => {
-      const option = document.createElement("option");
-      option.value = color;
-      option.textContent = color;
-      choice.appendChild(option);
-    });
+  // BOUCLE FOREACH POUR CREER L'OPTION AFIN DE CHOISIR ENTRE UNE DES COULEURS PROPOSÉES
+  colors.forEach((color) => {
+    const option = document.createElement("option");
+    option.value = color;
+    option.textContent = color;
+    choice.appendChild(option);
+  });
 }
+
+// ÉVENNEMENT LORS DU CLICK SUR LA BALISE BUTTON
+const button = document.querySelector("#addToCart");
+button.addEventListener("click", (e) => {
+  const color = document.querySelector("#colors").value;
+  const quantity = document.querySelector("#quantity").value;
+  // SI ERREUR EST EGAL " " OU A NUL, OU BIEN QUANTITY EST EGAL A NUL OU 0.
+  if (
+    color == null ||
+    color === "" ||
+    quantity == null ||
+    quantity == 0 // COMPARE STRING ET NUMBER DONC JUSTE (==)
+  ) {
+    alert("SVP, choisissez une couleur et une quantité");
+    // POUR EVITER QUE LA PAGE NOUS ENVOIE VERS LA PAGE PANIER
+    return;
+  }
+  // Stockage dans le localStorage
+  const dataObject = {
+    id: productId,
+    color: color,
+    quantity: Number(quantity),
+    price: valuePrice,
+    imageUrl: iURL,
+    altTxt: altTEXT,
+  };
+  // JSON.stringify pour transformer l'objet en chaine de caractère
+  localStorage.setItem(productId, JSON.stringify(dataObject));
+  window.location.href = "cart.html";
+});
