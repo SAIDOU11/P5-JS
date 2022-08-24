@@ -1,16 +1,17 @@
 /* FONCTION ASYNCHRONE VA RETOURNER LA PROMESSE 
-(AWAIT) VA ATTENDRE LA RESOLUTION DE LA PROMESSE FETCH SOIT ARRIVER AVANT D'AGIR
+(AWAIT) VA ATTENDRE QUE LA RESOLUTION DE LA PROMESSE FETCH SOIT ARRIVER AVANT D'AGIR
 */
 
 const loadData = async () => {
   const url = "http://localhost:3000/api/products";
-  const res = await fetch(url).then();
-  const dataP = await res.json().then((data) => addProducts(data));
+  const res = await fetch(url)
+    .then((res) => res.json())
+    .then((data) => addProducts(data));
 };
 
 loadData();
 
-// FONCTION AJOUT DE PRODUIT
+// FONCTION AJOUT DE PRODUIT.. NOS FONCTIONS SERONT REGROUPER Á l'INTERIEUR DE CETTE FONCTION
 function addProducts(allProducts) {
   // BOUCLE FOREACH .. POUR CHAQUE PRODUIT ON VA EXERCER LA FONCTION
   // POUR QUE TOUS LES ÉLÉMENTS DU TABLEAU SOIT AFFICHER DE LA MÊME MANIERE
