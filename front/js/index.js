@@ -7,8 +7,12 @@ const loadData = async () => {
   const res = await fetch(url)
     .then((res) => res.json())
     .then((data) => addProducts(data));
-};
+}; /* ******************************* 
 
+rajouter catch. 
+enlever price localstorage
+
+  ******************************* */
 loadData();
 
 // FONCTION AJOUT DE PRODUIT.. NOS FONCTIONS SERONT REGROUPER Á l'INTERIEUR DE CETTE FONCTION
@@ -46,9 +50,7 @@ function createAnchor(id) {
 // Création de fonction qui sera appeler à la création du id #items
 function parentId(pI) {
   const items = document.querySelector("#items");
-  if (items != null) {
-    items.appendChild(pI);
-  }
+  items.appendChild(pI);
 }
 
 // Fonction qui va fabriquer une balise <img> à l'intérieur de son parent #

@@ -11,8 +11,9 @@ function saveBasket(basket) {
   localStorage.setItem("basket", JSON.stringify(basket));
 }
 
+saveBasket("dldldl");
 // JSON.stringify ça va transformer quelque chose de complèxe comme un tableau où un objet en chaine de caractère.
-
+/* 
 function getBasket() {
   let basket = localStorage.getItem("basket");
   if (basket == null) {
@@ -28,7 +29,25 @@ function addBasket(product) {
   let basket = getBasket();
   basket.push(product); // Basket est un tableau .. on pousse le produit
   saveBasket(basket);
+  console.table(basket);
 }
 
-/* Concept du panier c'est un élément dans lequel on va avoir des produits
-NB de produits indéfini. */
+
+
+Concept du panier c'est un élément dans lequel on va avoir des produits
+NB de produits indéfini.
+
+function basketCart(){
+const selectedQuantity = document.querySelector("...").value
+const oldQuantity = localStorage.getitem("...").quantity || 0
+const newQuantity = Number(selectedQuantity) + oldQuantity
+const item = { ...item, quantity: newQuantity }
+localStorage.setItem("...", JSON.stringify(item)
+
+const div = document.createElement("div");
+div.addEventListener("click", myFunction);
+div.innerHTML = "super longue string HTML";
+}
+
+
+*/

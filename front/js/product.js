@@ -4,9 +4,10 @@ const productId = urlParams.get("id");
 
 // CONDITIONS DE VARIABLE (PORTÉE GLOBALE) POUR STOCKER DANS LE LOCAL STORAGE
 if (productId != null) {
-  var valuePrice = 0;
+  var valuePrice = 0; // enlever prix du localstorage
   var iURL = "";
   var altTEXT = "";
+  var nameProd = "";
 }
 
 // FONCTION FETCH POUR FAIRE UNE REQUETE AUX SERVEURS QUI VA RETOURNER LES INFORMATIONS DE L'API
@@ -21,6 +22,7 @@ function addData(logo) {
   const { altTxt, colors, description, imageUrl, name, price } = logo;
   altTEXT = altTxt;
   iURL = imageUrl;
+  nameProd = name;
   tagImage(imageUrl, altTxt);
   nameTitle(name);
   spanPrice(price);
@@ -85,15 +87,17 @@ button.addEventListener("click", (e) => {
     return;
   }
   // Stockage dans le localStorage
+  const key = `${productId}-${color}`;
   const dataObject = {
     id: productId,
     color: color,
     quantity: Number(quantity),
+    name: nameProd,
     price: valuePrice,
     imageUrl: iURL,
     altTxt: altTEXT,
   };
   // JSON.stringify pour transformer l'objet en chaine de caractère
-  localStorage.setItem(productId, JSON.stringify(dataObject));
+  localStorage.setItem(key, JSON.stringify(dataObject));
   window.location.href = "cart.html";
 });
