@@ -11,6 +11,7 @@ cart.forEach((item) => displayProductBasket(item));
 (.parse) Pour transformer la chaine de caractère en tableau.
  (ligne )
 */
+
 function saveBasket(cart) {
   const nbOfProducts = localStorage.length;
   for (let i = 0; i < nbOfProducts; i++) {
@@ -22,12 +23,16 @@ function saveBasket(cart) {
 
 /* Fonction pour la mise à jour de la quantité et du prix dans le panier
  */
-function addBasket(id, newValue, item) {
-  const findProduct = cart.find((product) => product.id === id);
-  findProduct.quantity = Number(newValue);
+function addBasket(id, item) {
+  const findProduct = cart.find((product) => product.id && product.color == id);
+  if (findProduct != undefined) {
+    findProduct.quantity++;
+  } else {
+    findProduct.quantity = 1;
+  }
+  divSettings(settings, item);
   displayTotalPrice();
   displayTotalQuantity();
-  getBasket(item);
 }
 
 // FONCTION SAUVEGARDE DANS LE LOCALSTORAGE
@@ -37,15 +42,21 @@ function getBasket(item) {
   localStorage.setItem(key, saveUpdate);
 }
 
+// function removeFromBasket(item) {
+//   let basket = getBasket();
+//   basket = basket.filter((p) => p.id != item.id);
+//   saveBasket();
+// }
+
 // ********************************************** BASKET PRICE & QUANTITY ***********************************************
 
 //
 function displayTotalQuantity() {
   let total = 0;
-  const totalQuantity = document.querySelector("#totalQuantity");
+  let totalQuantity = document.querySelector("#totalQuantity");
   // FONCTION FOREACH
   cart.forEach((product) => {
-    const totalUnitQuantity = total + product.quantity;
+    let totalUnitQuantity = total + product.quantity;
     total = totalUnitQuantity;
   });
   totalQuantity.textContent = total;
@@ -58,7 +69,7 @@ function displayTotalPrice() {
   // FONCTION FOREACH
   cart.forEach((product) => {
     const totalUnitPrice = product.price * product.quantity;
-    total += totalUnitPrice;
+    total = total + totalUnitPrice;
   });
   totalPrice.textContent = total;
 }
@@ -70,9 +81,11 @@ function displayTotalPrice() {
 
 function displayProductBasket(item) {
   const article = tagParentArticle(item);
-  const divIdImg = divCartImg(item);
-  article.appendChild(divIdImg);
+  const divId = divCartImg();
+  const image = tagImage(item);
   const constCartContent = divCartContent(item);
+  divId.appendChild(image);
+  article.appendChild(divId);
   article.appendChild(constCartContent);
   idParentArticle(article);
   displayTotalQuantity();
@@ -101,14 +114,19 @@ function tagParentArticle(item) {
 /*
 Fonction qui va créer une div puis une classe dans la balise <img>
 */
-function divCartImg(item) {
+function divCartImg() {
   const divId = document.createElement("div");
   divId.classList.add("cart__item__img");
+
+  return divId;
+}
+
+// Fonction qui va fabriquer une balise <img> à l'intérieur de son parent #
+function tagImage(item) {
   const image = document.createElement("img");
   image.src = item.imageUrl;
   image.alt = item.altTxt;
-  divId.appendChild(image);
-  return divId;
+  return image;
 }
 
 // ******************************************** DIV cart__item__content ****************************************
@@ -161,7 +179,7 @@ function divContentSettings(item) {
   const settings = document.createElement("div");
   settings.classList.add("cart__item__content__settings");
   divSettings(settings, item);
-  divSettingsDelete(settings);
+  divSettingsDelete(settings, item);
   return settings;
 }
 // ******************************************** DIV cart__item__content__settings__quantity ******************************
@@ -183,9 +201,7 @@ function divSettings(settings, item) {
   input.max = "100";
   input.value = item.quantity;
   // Fonction ajout ou retrait de valeur dans le panier
-  input.addEventListener("input", () =>
-    newQandPinBasket(item.id, input.value, item)
-  );
+  input.addEventListener("input", () => addBasket(item.id, input.value, item));
   // création des éléments enfants
   quantity.appendChild(input);
   settings.appendChild(quantity);
@@ -193,14 +209,23 @@ function divSettings(settings, item) {
 
 // ************************************ DIV cart__item__content__settings__delete ****************************
 
-function divSettingsDelete(settings) {
+function divSettingsDelete(settings, item) {
   const suppress = document.createElement("div");
   suppress.classList.add("cart__item__content__settings__delete");
+  suppress.addEventListener("click", () => deletproduct(item));
+
   const paragraphInDiv = document.createElement("p");
   paragraphInDiv.classList.add("deleteItem");
   paragraphInDiv.textContent = "Supprimer";
   suppress.appendChild(paragraphInDiv);
   settings.appendChild(suppress);
+}
+
+function deletproduct(item) {
+  const productDelete = cart.findIndex(
+    (product) => product.id === item.id && item.color
+  );
+  cart.filter(productDelete, 1);
 }
 
 /*

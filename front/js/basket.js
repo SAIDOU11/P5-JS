@@ -13,7 +13,7 @@ function saveBasket(basket) {
 
 saveBasket("dldldl");
 // JSON.stringify ça va transformer quelque chose de complèxe comme un tableau où un objet en chaine de caractère.
-/* 
+
 function getBasket() {
   let basket = localStorage.getItem("basket");
   if (basket == null) {
@@ -32,10 +32,17 @@ function addBasket(product) {
   console.table(basket);
 }
 
+// removeFromBasket(product){
+//    let basket = getBasket();
+//    basket = basket.filter ((p => p.id != product.id ))
 
+// }
+
+/*
 
 Concept du panier c'est un élément dans lequel on va avoir des produits
 NB de produits indéfini.
+
 
 function basketCart(){
 const selectedQuantity = document.querySelector("...").value
