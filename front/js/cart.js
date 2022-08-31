@@ -24,15 +24,16 @@ function saveBasket(cart) {
 /* Fonction pour la mise à jour de la quantité et du prix dans le panier
  */
 function addBasket(id, item) {
-  const findProduct = cart.find((product) => product.id && product.color == id);
+  const findProduct = cart.find((product) => product.id == id);
   if (findProduct != undefined) {
     findProduct.quantity++;
   } else {
     findProduct.quantity = 1;
   }
-  divSettings(settings, item);
+  divSettings(item);
   displayTotalPrice();
   displayTotalQuantity();
+  getBasket(item);
 }
 
 // FONCTION SAUVEGARDE DANS LE LOCALSTORAGE
@@ -42,11 +43,11 @@ function getBasket(item) {
   localStorage.setItem(key, saveUpdate);
 }
 
-// function removeFromBasket(item) {
-//   let basket = getBasket();
-//   basket = basket.filter((p) => p.id != item.id);
-//   saveBasket();
-// }
+//
+function removeFromBasket(item) {
+  const key = `${item.id}-${item.color}`;
+  localStorage.removeItem(key);
+}
 
 // ********************************************** BASKET PRICE & QUANTITY ***********************************************
 
@@ -138,9 +139,11 @@ function divCartContent(item) {
   // Création de div et Ajout de class
   const constCartContent = document.createElement("div");
   constCartContent.classList.add("cart__item__content");
+
   // Fonction rappel de fonction
   const description = divCartDescription(item);
-  const settings = divContentSettings(item);
+  const settings = divSettings(item);
+
   // création des éléments enfants
   constCartContent.appendChild(description);
   constCartContent.appendChild(settings);
@@ -174,25 +177,25 @@ function divCartDescription(item) {
 }
 
 // ******************************************** DIV cart__item__content__settings ******************************
+
+// ******************************************** DIV cart__item__content__settings__quantity ******************************
 // Fonction div "cart__item__content__settings" parente des autres éléments
-function divContentSettings(item) {
+
+function divSettings(item) {
+  // Création de div parente et Ajout de class
   const settings = document.createElement("div");
   settings.classList.add("cart__item__content__settings");
-  divSettings(settings, item);
-  divSettingsDelete(settings, item);
-  return settings;
-}
-// ******************************************** DIV cart__item__content__settings__quantity ******************************
-// Seconde enfant de la div cart__item__content
-function divSettings(settings, item) {
-  // Création de div et Ajout de class
+
+  // Création de div firstChild et Ajout de class
   const quantity = document.createElement("div");
   quantity.classList.add("cart__item__content__settings__quantity");
+
   // création des éléments et ajout de l'élément enfant
   const paragraph = document.createElement("p");
   paragraph.textContent = "Qté :";
   quantity.appendChild(paragraph);
-  // création des éléments
+
+  // création des éléments input
   const input = document.createElement("input");
   input.type = "number";
   input.classList.add("itemQuantity");
@@ -202,9 +205,12 @@ function divSettings(settings, item) {
   input.value = item.quantity;
   // Fonction ajout ou retrait de valeur dans le panier
   input.addEventListener("input", () => addBasket(item.id, input.value, item));
+
   // création des éléments enfants
   quantity.appendChild(input);
   settings.appendChild(quantity);
+  divSettingsDelete(settings, item);
+  return settings;
 }
 
 // ************************************ DIV cart__item__content__settings__delete ****************************
@@ -212,7 +218,7 @@ function divSettings(settings, item) {
 function divSettingsDelete(settings, item) {
   const suppress = document.createElement("div");
   suppress.classList.add("cart__item__content__settings__delete");
-  suppress.addEventListener("click", () => deletproduct(item));
+  suppress.addEventListener("click", () => deletFromBasket(item));
 
   const paragraphInDiv = document.createElement("p");
   paragraphInDiv.classList.add("deleteItem");
@@ -221,11 +227,22 @@ function divSettingsDelete(settings, item) {
   settings.appendChild(suppress);
 }
 
-function deletproduct(item) {
+function deletFromBasket(item) {
   const productDelete = cart.findIndex(
-    (product) => product.id === item.id && item.color
+    (product) => product.id === item.id && product.color === item.color
   );
-  cart.filter(productDelete, 1);
+  cart.splice(productDelete, 1);
+  displayTotalQuantity();
+  displayTotalPrice();
+  removeFromBasket(item);
+  removeFromPageBasket(item);
+}
+
+function removeFromPageBasket(item) {
+  const productRemove = document.querySelector(
+    `article[data-id="${item.id}"][data-color="${item.color}"]`
+  );
+  productRemove.remove();
 }
 
 /*
