@@ -244,10 +244,72 @@ function removeFromPageBasket(item) {
   );
   productRemove.remove();
 }
+// ************************************************** FORM **************************************************
+const orderButton = document.querySelector(".cart__order");
+orderButton.addEventListener("click", (e) => subForm(e));
 
 /*
+router.post('/order', productCtrl.orderProducts);
+effectuer la fonction orderproducts .. qui se trouve dans le dossier productCtrl
+fonction s'appel orderProducts
+*/
 
- item {
+function subForm(e) {
+  // Éviter le raffrachissement de la page
+  e.preventDefault();
+
+  // Message retour sur le formulaire
+  if (cart.length === 0) alert("Veuillez passer vos articles dans le panier");
+  const newClient = requestBody();
+  const form = document.querySelector(".cart__order");
+  const promise = fetch("http://localhost:3000/api/products/order", {
+    method: "POST",
+    body: JSON.stringify(newClient),
+    headers: {
+      "Content-Type": "application/json",
+      //  "Access-Control-Allow-Origin": "*",
+    },
+  });
+
+  promise.then(async (response) => {
+    try {
+      console.log(response);
+      const contenu = await response.json();
+      console.log(contenu);
+    } catch (e) {
+      console.log(e);
+    }
+  });
+  /*
+    .then((res) => res.json())
+    .then((data) => console.log(data));*/
+}
+/*
+ 
+}*/
+//  .then((res) => res.json())
+// .then((data) => console.log(data));
+
+function requestBody() {
+  const newClient = {
+    contact: {
+      firstName: "valuefirstName",
+      lastName: "valuelastName",
+      adress: "valueadress",
+      city: "valuecity",
+      email: "valueemail",
+    },
+    products: ["107fb5b75607497b96722bda5b504926"],
+  };
+  return newClient;
+}
+// ***********
+/*
+ 
+}
+*/
+
+//item
 // // altTxt: "Photo d'un canapé jaune et noir, quattre places";
 // // color: "Black/Yellow";
 // // id: "415b7cacb65d43b2b5c1ff70f3393ad1";
@@ -255,6 +317,3 @@ function removeFromPageBasket(item) {
 // // price: 120;
 // // quantity: 1;
 // // name :
- } 
-
- */
