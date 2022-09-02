@@ -11,7 +11,7 @@ const productId = urlParams.get("id");
 // CONDITIONS DE VARIABLE (PORTÉE GLOBALE) POUR STOCKER DANS LE LOCAL STORAGE
 
 if (productId != null) {
-  var valuePrice = 0; // enlever prix du localstorage
+  // var valuePrice = 0; // enlever prix du localstorage
   var iURL = "";
   var altTEXT = "";
   var nameProd = "";
@@ -117,13 +117,13 @@ button.addEventListener("click", (e) => {
 
   const key = `${productId}-${color}`;
 
-  //
+  // Stock dans le local Storage
   const dataObject = {
     id: productId,
     color: color,
     quantity: Number(quantity),
     name: nameProd,
-    price: valuePrice,
+    //  price: valuePrice,
     imageUrl: iURL,
     altTxt: altTEXT,
   };

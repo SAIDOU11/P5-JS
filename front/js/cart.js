@@ -8,9 +8,6 @@ cart.forEach((item) => displayProductBasket(item));
 
 // ********************************************** SAVE BASKET ***********************************************
 
-// Fonction pour mettre le produit dans le localstorage.
-//(.parse) Pour transformer la chaine de caractère en tableau. (ligne 14 à 21)
-
 function getBasket(cart) {
   const nbOfProducts = localStorage.length;
   for (let i = 0; i < nbOfProducts; i++) {
@@ -19,6 +16,19 @@ function getBasket(cart) {
     cart.push(parseTable);
   }
 }
+// *********************************************************************************************************
+const url = "http://localhost:3000/api/products";
+const nbOfProducts = localStorage.length;
+
+fetch(url)
+  .then((result) => result.json())
+  .then((data) => {
+    for (let i = 0; i < nbOfProducts; i++) {
+      console.log(data[i]._id);
+      console.log(data);
+    }
+  })
+  .catch((err) => console.log(err));
 
 // ******************************** FONCTION AJOUT DANS LE LOCALSTORAGE *********************************
 
@@ -34,18 +44,19 @@ function addBasket(id, item) {
   divSettings(item);
   displayTotalPrice();
   displayTotalQuantity();
-  setBasket(item);
+  saveBasket(item);
 }
-
 // ******************************** FONCTION SAUVEGARDE DANS LE LOCALSTORAGE *********************************
 
 // Fonction pour la sauvegarde des produits dans le localStorage. (ligne 44 à 48)
 
-function setBasket(item) {
+function saveBasket(item) {
   saveUpdate = JSON.stringify(item);
   const key = `${item.id}-${item.color}`;
   localStorage.setItem(key, saveUpdate);
 }
+// Fonction pour mettre le produit dans le localstorage.
+//(.parse) Pour transformer la chaine de caractère en tableau. (ligne 14 à 21)
 
 // ******************************************* FONCTION RETIRER DU PANIER ************************************
 
@@ -103,7 +114,7 @@ function displayProductBasket(item) {
   idParentArticle(article);
   displayTotalQuantity();
   displayTotalPrice();
-  setBasket(item);
+  saveBasket(item);
 }
 
 // ******************************************** SECTION ID "#cart__items" ***********************************
