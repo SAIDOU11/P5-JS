@@ -11,7 +11,7 @@ const productId = urlParams.get("id");
 // CONDITIONS DE VARIABLE (PORTÉE GLOBALE) POUR STOCKER DANS LE LOCAL STORAGE
 
 if (productId != null) {
-  // var valuePrice = 0; // enlever prix du localstorage
+  var valuePrice = 0;
   var iURL = "";
   var altTEXT = "";
   var nameProd = "";
@@ -22,17 +22,28 @@ if (productId != null) {
 // Appel de la fonction fetch, requête aux serveurs qui va retourner les informations de l'API.
 // (ligne 25 à 27)
 
-fetch(`http://localhost:3000/api/products/${productId}`)
-  .then((response) => response.json())
-  .then((res) => addData(res));
+let dataUnitProduct = [];
+
+const loadDataProduct = async () => {
+  await fetch(`http://localhost:3000/api/products/${productId}`)
+    .then((response) => response.json())
+    .then((res) => {
+      dataUnitProduct = res;
+      displayData(dataUnitProduct);
+    })
+    .catch((error) => console.error(error));
+};
+//(res)
+loadDataProduct();
 
 // ************************************** FONCTION AJOUT DE DONNÉES  ***********************************
 
 // Récupération de données à l'intérieur de la constante logo.
 // Informations de valeurs de produits. (ligne 34 à 45)
 
-function addData(logo) {
+function displayData(logo) {
   const { altTxt, colors, description, imageUrl, name, price } = logo;
+
   altTEXT = altTxt;
   iURL = imageUrl;
   nameProd = name;
@@ -105,8 +116,11 @@ function chooseColors(colors) {
 // Si quantité et prix ne sont pas selectionner
 // Constante key pour selectionner independemment un produit identique selon une couleur différente.
 
-const button = document.querySelector("#addToCart");
-button.addEventListener("click", (e) => {
+const addToCart = document.querySelector("#addToCart");
+
+addToCart.addEventListener("click", () => {
+  let productTable = JSON.parse(localStorage.getItem("product"));
+
   const color = document.querySelector("#colors").value;
   const quantity = document.querySelector("#quantity").value;
 
@@ -116,10 +130,8 @@ button.addEventListener("click", (e) => {
   }
 
   const key = `${productId}-${color}`;
-
   // Stock dans le local Storage
-  const dataObject = {
-    id: productId,
+  const addToLocalStorage = {
     color: color,
     quantity: Number(quantity),
     name: nameProd,
@@ -128,7 +140,15 @@ button.addEventListener("click", (e) => {
     altTxt: altTEXT,
   };
 
-  localStorage.setItem(key, JSON.stringify(dataObject));
+  if (productTable == null) {
+    productTable = [];
+    productTable.push(dataUnitProduct);
+    console.log(productTable);
+    localStorage.setItem(
+      "produit : " + key,
 
+      JSON.stringify(addToLocalStorage)
+    );
+  }
   window.location.href = "cart.html";
 });

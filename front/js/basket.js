@@ -1,3 +1,26 @@
+// let dataProducts = [];
+
+// const dataFetch = async () => {
+//   await fetch(`http://localhost:3000/api/products`)
+//     .then((res) => res.json())
+//     .then((data) => {
+//       dataProducts = data;
+//       console.table(dataProducts);
+//     })
+//     .catch((error) => console.error(error));
+// };
+
+// const displayProducts = async () => {
+//   await dataFetch();
+// };
+
+// displayProducts();
+// const displayCart = async () => {};
+
+// displayCart();
+
+//
+
 // QUI PERMET D'ENREGISTRER LE PANIER DANS LE LOCALSTORAGE
 //(basket) QUEL PANIER ON VEUT ENREGISTRER
 

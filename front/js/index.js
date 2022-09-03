@@ -4,11 +4,16 @@
 // Appel de la fonction
 // (ligne 7 à 15)
 
+let dataTable = [];
+
 const loadData = async () => {
   const url = "http://localhost:3000/api/products";
-  const res = await fetch(url)
+  await fetch(url)
     .then((res) => res.json())
-    .then((data) => addProducts(data))
+    .then((data) => {
+      dataTable = data;
+      addProducts(dataTable);
+    })
     .catch((error) => console.error(error));
 };
 
@@ -19,8 +24,8 @@ loadData();
 //Fonction ajout de produit. Nos fonctions seront regrouper à l'intérieur de cette fonction.
 // Création d'éléments et ajouts des fonctions enfants. (ligne 22 à 39)
 
-function addProducts(allProducts) {
-  allProducts.forEach((product) => {
+function addProducts(dataTable) {
+  dataTable.forEach((product) => {
     const { _id, imageUrl, altTxt, name, description } = product;
 
     const anchor = createAnchor(_id);

@@ -1,6 +1,7 @@
 const cart = [];
 
-//Appel de la fonction. (ligne 14)
+// Appel de la fonction. (ligne 14)
+
 getBasket(cart);
 
 // Boucle forEach pour la création pour que chaque produit soit ajouter à l'intérieur du panier
@@ -9,6 +10,13 @@ cart.forEach((item) => displayProductBasket(item));
 // ********************************************** SAVE BASKET ***********************************************
 
 function getBasket(cart) {
+  const url = "http://localhost:3000/api/products";
+  fetch(url)
+    .then((result) => result.json())
+    .then((data) => {
+      console.log(data);
+    })
+    .catch((err) => console.log(err));
   const nbOfProducts = localStorage.length;
   for (let i = 0; i < nbOfProducts; i++) {
     const product = localStorage.getItem(localStorage.key(i));
@@ -16,19 +24,6 @@ function getBasket(cart) {
     cart.push(parseTable);
   }
 }
-// *********************************************************************************************************
-const url = "http://localhost:3000/api/products";
-const nbOfProducts = localStorage.length;
-
-fetch(url)
-  .then((result) => result.json())
-  .then((data) => {
-    for (let i = 0; i < nbOfProducts; i++) {
-      console.log(data[i]._id);
-      console.log(data);
-    }
-  })
-  .catch((err) => console.log(err));
 
 // ******************************** FONCTION AJOUT DANS LE LOCALSTORAGE *********************************
 
@@ -103,7 +98,7 @@ function displayTotalPrice() {
 
 // Fonction display product basket qui va regrouper toutes les autres petites fonctions (ligne 95 à 107)
 
-function displayProductBasket(item) {
+function displayProductBasket(item, logo) {
   const article = tagParentArticle(item);
   const divId = divCartImg();
   const image = tagImage(item);
@@ -194,7 +189,7 @@ function divCartDescription(item) {
   paragraphColor.textContent = item.color;
 
   const paragraphPrice = document.createElement("p");
-  paragraphPrice.textContent = item.price + " € ";
+  paragraphPrice.innerHTML = item.price + " € ";
 
   description.appendChild(h2);
   description.appendChild(paragraphColor);
