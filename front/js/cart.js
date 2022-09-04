@@ -1,29 +1,44 @@
 const cart = [];
 
-// Appel de la fonction. (ligne 14)
-
-getBasket(cart);
-
-// Boucle forEach pour la création pour que chaque produit soit ajouter à l'intérieur du panier
-cart.forEach((item) => displayProductBasket(item));
-
 // ********************************************** SAVE BASKET ***********************************************
 
-function getBasket(cart) {
-  const url = "http://localhost:3000/api/products";
-  fetch(url)
-    .then((result) => result.json())
-    .then((data) => {
-      console.log(data);
-    })
-    .catch((err) => console.log(err));
+async function getBasket(cart) {
   const nbOfProducts = localStorage.length;
   for (let i = 0; i < nbOfProducts; i++) {
     const product = localStorage.getItem(localStorage.key(i));
     const parseTable = JSON.parse(product);
+    const idProduct = parseTable.id;
+    const a = await getJSON(idProduct);
+    parseTable.price = a.price;
     cart.push(parseTable);
   }
+  cart.forEach((item) => displayProductBasket(item));
 }
+//Appel de la fonction. (ligne 18)
+getBasket(cart);
+// Boucle forEach pour la création pour que chaque produit soit ajouter à l'intérieur du panier
+// cart.forEach((item) => displayProductBasket(item));
+/* Recevoir le produit par l'id */
+async function getJSON(idProduct) {
+  return await fetch(`http://localhost:3000/api/products/${idProduct}`)
+    .then((response) => response.json())
+    .then((responseJson) => {
+      return responseJson;
+    });
+}
+// *********************************************************************************************************
+/*const url = "http://localhost:3000/api/products";
+const nbOfProducts = localStorage.length;
+
+fetch(url)
+  .then((result) => result.json())
+  .then((data) => {
+    for (let i = 0; i < nbOfProducts; i++) {
+      console.log(data[i]._id);
+      console.log(data);
+    }
+  })
+  .catch((err) => console.log(err));*/
 
 // ******************************** FONCTION AJOUT DANS LE LOCALSTORAGE *********************************
 
@@ -98,7 +113,7 @@ function displayTotalPrice() {
 
 // Fonction display product basket qui va regrouper toutes les autres petites fonctions (ligne 95 à 107)
 
-function displayProductBasket(item, logo) {
+function displayProductBasket(item) {
   const article = tagParentArticle(item);
   const divId = divCartImg();
   const image = tagImage(item);
@@ -109,6 +124,7 @@ function displayProductBasket(item, logo) {
   idParentArticle(article);
   displayTotalQuantity();
   displayTotalPrice();
+  item.price = null;
   saveBasket(item);
 }
 
@@ -189,7 +205,7 @@ function divCartDescription(item) {
   paragraphColor.textContent = item.color;
 
   const paragraphPrice = document.createElement("p");
-  paragraphPrice.innerHTML = item.price + " € ";
+  paragraphPrice.textContent = item.price + " € ";
 
   description.appendChild(h2);
   description.appendChild(paragraphColor);
@@ -420,7 +436,7 @@ function emailInvalid() {
   const email = document.querySelector("#email").value;
   const regex = /^[A-Za-z0-9+_.-]+@(.+)$/;
   if (regex.test(email) === false) {
-    alert("veuillez entrez vodre adresse email s'il vous plait");
+    alert("veuillez entrez une adresse email valide s'il vous plait");
     return true;
   } else {
     return false;

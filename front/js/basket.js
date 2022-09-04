@@ -22,7 +22,7 @@
 //
 
 // QUI PERMET D'ENREGISTRER LE PANIER DANS LE LOCALSTORAGE
-//(basket) QUEL PANIER ON VEUT ENREGISTRER
+// (basket) QUEL PANIER ON VEUT ENREGISTRER
 
 function saveBasket(basket) {
   localStorage.setItem("basket", JSON.stringify(basket));
