@@ -1,6 +1,6 @@
 // ************************************** CONSTANTES  ***********************************
 
-// Fonction pour récupérer les params et récuperer le Id de chaque produit. (ligne 5 à 7)
+// Constantes créer pour récupérer les params et récuperer le Id de chaque produit. (Ligne 5 à 7)
 
 const linkSearch = window.location.search;
 const urlParams = new URLSearchParams(linkSearch);
@@ -8,10 +8,9 @@ const productId = urlParams.get("id");
 
 // ************************************** CONDITIONS  ***********************************
 
-// CONDITIONS DE VARIABLE (PORTÉE GLOBALE) POUR STOCKER DANS LE LOCAL STORAGE
+//Conditions if () de variable (portée globale) qui vont aider à créer le stock dans le localStorage.
 
 if (productId != null) {
-  // var valuePrice = 0; // enlever prix du localstorage
   var iURL = "";
   var altTEXT = "";
   var nameProd = "";
@@ -19,8 +18,9 @@ if (productId != null) {
 
 // ************************************** FONCTIONS FETCH  ***********************************
 
-// Appel de la fonction fetch, requête aux serveurs qui va retourner les informations de l'API.
-// (ligne 25 à 27)
+// Appel de la fonction fetch, requête aux serveurs pour retourner les valeurs avec leurs ID.
+// Dû à nos constantes créer pour pour récupérer les params et récuperer le Id de chaque produit.
+// (Ligne 25 à 27)
 
 fetch(`http://localhost:3000/api/products/${productId}`)
   .then((response) => response.json())
@@ -28,8 +28,10 @@ fetch(`http://localhost:3000/api/products/${productId}`)
 
 // ************************************** FONCTION AJOUT DE DONNÉES  ***********************************
 
-// Récupération de données à l'intérieur de la constante logo.
-// Informations de valeurs de produits. (ligne 34 à 45)
+// Fonction ajout de données. Ainsi que les fonctions qui ont servi à créer le body,
+// seront regrouper à l'intérieur de cette fonction.
+// Récupération de données à l'intérieur de la constante (logo).
+// Constantes qui récupere avec les informations de notre tableau produits. (Ligne 36 à 47)
 
 function addData(logo) {
   const { altTxt, colors, description, imageUrl, name, price } = logo;
@@ -46,7 +48,8 @@ function addData(logo) {
 
 // ************************************* FONCTION CREATION TAG IMAGE *************************************
 
-// Fonction qui va créer image dans son parent. (ligne 51 à 57)
+// Fonction qui va créer un élément image dans son parent et ajouter la source et le texte de l'image.
+// (Ligne 54 à 60)
 
 function tagImage(imageUrl, altTxt) {
   const image = document.createElement("img");
@@ -58,7 +61,7 @@ function tagImage(imageUrl, altTxt) {
 
 // ******************************** FONCTION AJOUT DE TITRE DANS LE DIV #TITLE ********************************
 
-// Fonction qui va nommer la balise <h1>. (ligne 63 à 66)
+// Fonction qui va nommer la balise <h1> avec le nom de son produit. (Ligne 66 à 69)
 
 function nameTitle(name) {
   const h1 = document.querySelector("#title");
@@ -67,7 +70,7 @@ function nameTitle(name) {
 
 // ******************************* FONCTION AJOUT Du PRIX DANS LA BALISE SPAN *******************************
 
-// Fonction qui va nommer la balise <span>. (ligne 72 à 75)
+// Fonction qui va nommer la balise <span> de son prix de produit. (Ligne 75 à 77)
 
 function spanPrice(price) {
   const span = document.querySelector("#price");
@@ -76,7 +79,7 @@ function spanPrice(price) {
 
 // **************************** FONCTION AJOUT DE LA DESCRIPTION DANS LA BALISE P *******************************
 
-// Fonction qui va nommer la balise <p>. (ligne 81 à 84)
+// Fonction qui va nommer la balise <p> de sa description. (Ligne 84 à 87)
 
 function tagParagraph(description) {
   const paragraph = document.querySelector("#description");
@@ -85,7 +88,7 @@ function tagParagraph(description) {
 
 // ************************************** FONCTION CHOIX DE COULEURS *****************************************
 
-// Fonction qui va permettre le choix de couleurs. (ligne 90 à 99)
+// Fonction qui va permettre le choix de couleurs disponible selon son produit. (Ligne 96 à 102)
 
 function chooseColors(colors) {
   const choice = document.querySelector("#colors");
@@ -102,8 +105,9 @@ function chooseColors(colors) {
 
 // Fonction évennement lors du click sur la balise <button>
 // Choix de la couleur du produit et quantité de produits
-// Si quantité et prix ne sont pas selectionner
-// Constante key pour selectionner independemment un produit identique selon une couleur différente.
+// Si quantité et prix ne sont pas selectionner retour vers faire un choix avant de valider.
+// Constante key pour selectionner un produit independemment identique,
+// selon son ID mais avec une couleur différente. (Ligne 112 à 138)
 
 const button = document.querySelector("#addToCart");
 button.addEventListener("click", (e) => {

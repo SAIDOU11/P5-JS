@@ -1,6 +1,16 @@
+// ************************************** CONSTANTE  ***********************************
+// Tableau vide pour récupérer les informations de la fonction getBasket sous forme de tableau.
+
 const cart = [];
 
-// ********************************************** SAVE BASKET ***********************************************
+// ********************************************** GET BASKET ***********************************************
+// Fonction asynchrome afin d'attentre la réponse du fetch pour en ensuite récupérer le panier.
+//L'associer au localstorage.
+//(.parse) Pour transformer la chaine de caractère en tableau.
+// Récupération du même ID afin de récupérer le prix du produit qui n'apparaît pas dans le localstorage.
+// Boucle forEach pour que chaque produit hérite de la fonction à son arriver dans le panier.
+// (Ligne 15 à 24)
+//Appel de la fonction. (Ligne 26)
 
 async function getBasket(cart) {
   const nbOfProducts = localStorage.length;
@@ -8,17 +18,21 @@ async function getBasket(cart) {
     const product = localStorage.getItem(localStorage.key(i));
     const parseTable = JSON.parse(product);
     const idProduct = parseTable.id;
-    const a = await getJSON(idProduct);
-    parseTable.price = a.price;
+    const pullId = await getJSON(idProduct);
+    parseTable.price = pullId.price;
     cart.push(parseTable);
   }
   cart.forEach((item) => displayProductBasket(item));
 }
-//Appel de la fonction. (ligne 18)
+
 getBasket(cart);
-// Boucle forEach pour la création pour que chaque produit soit ajouter à l'intérieur du panier
-// cart.forEach((item) => displayProductBasket(item));
-/* Recevoir le produit par l'id */
+
+// ******************************************* ASYNC FONCTION **********************************************
+
+// Fonction asynchrome afin d'attentre la réponse du fetch
+// Recevoir le produit par l'ID associer au produit selectionner dans le localstorage.
+// (Ligne 36 à 42)
+
 async function getJSON(idProduct) {
   return await fetch(`http://localhost:3000/api/products/${idProduct}`)
     .then((response) => response.json())
@@ -26,23 +40,13 @@ async function getJSON(idProduct) {
       return responseJson;
     });
 }
-// *********************************************************************************************************
-/*const url = "http://localhost:3000/api/products";
-const nbOfProducts = localStorage.length;
 
-fetch(url)
-  .then((result) => result.json())
-  .then((data) => {
-    for (let i = 0; i < nbOfProducts; i++) {
-      console.log(data[i]._id);
-      console.log(data);
-    }
-  })
-  .catch((err) => console.log(err));*/
+// ******************************** FONCTION AJOUT DANS LE PANIER *********************************
 
-// ******************************** FONCTION AJOUT DANS LE LOCALSTORAGE *********************************
-
-// Fonction pour la mise à jour de la quantité et du prix dans le panier. (ligne 27 à 38)
+// Fonction ajout de produit dans le panier.
+// Fonction qui va nous permettre d'ajouter le produit.
+// Ainsi qu'ajouter les fonctions dont on aura besoin pour ajuster notre panier.
+// (Ligne 51 à 62)
 
 function addBasket(id, item) {
   const findProduct = cart.find((product) => product.id == id);
@@ -54,24 +58,24 @@ function addBasket(id, item) {
   divSettings(item);
   displayTotalPrice();
   displayTotalQuantity();
-  saveBasket(item);
+  saveToLocalStorage(item);
 }
+
 // ******************************** FONCTION SAUVEGARDE DANS LE LOCALSTORAGE *********************************
 
-// Fonction pour la sauvegarde des produits dans le localStorage. (ligne 44 à 48)
+// Fonction pour la sauvegarde du panier dans le localStorage.
+// Chaque produits selectionner et sauvegarger dans le localstorage.
+// (Ligne 70 à 74)
 
-function saveBasket(item) {
+function saveToLocalStorage(item) {
   saveUpdate = JSON.stringify(item);
   const key = `${item.id}-${item.color}`;
   localStorage.setItem(key, saveUpdate);
 }
-// Fonction pour mettre le produit dans le localstorage.
-//(.parse) Pour transformer la chaine de caractère en tableau. (ligne 14 à 21)
 
 // ******************************************* FONCTION RETIRER DU PANIER ************************************
 
-// Fonction pour retirer un produit du panier. (ligne 54 à 57)
-
+// Fonction pour retirer un produit du panier. (Ligne 80 à 83)
 function removeFromBasket(item) {
   const key = `${item.id}-${item.color}`;
   localStorage.removeItem(key);
@@ -79,11 +83,11 @@ function removeFromBasket(item) {
 
 // ********************************************* BASKET PRICE & QUANTITY ************************************
 
-// Fonction pour savoir le prix total et le prix. (ligne 63 à 73)
+// Fonction pour savoir la quantité de produit dans le panier. (Ligne 88 à 98 )
 
 function displayTotalQuantity() {
   let total = 0;
-  let totalQuantity = document.querySelector("#totalQuantity");
+  const totalQuantity = document.querySelector("#totalQuantity");
 
   cart.forEach((product) => {
     let totalUnitQuantity = total + product.quantity;
@@ -95,7 +99,7 @@ function displayTotalQuantity() {
 
 // ***************************************** FONCTION DISPLAY TOTAL PRICE ***********************************
 
-// Fonction pour le prix total du prix. Produit multiplier par sa quantité. (ligne 79 à 89)
+// Fonction pour le prix total du panier. Produit multiplier par sa quantité. (Ligne 104 à 114)
 
 function displayTotalPrice() {
   let total = 0;
@@ -111,7 +115,8 @@ function displayTotalPrice() {
 
 // ******************************************** DISPLAY PRODUCT BASKET **************************************
 
-// Fonction display product basket qui va regrouper toutes les autres petites fonctions (ligne 95 à 107)
+// Fonction display product basket qui va regrouper toutes les autres petites fonctions.
+// Fonction qui va créer l'ensemble du body. (Ligne 121 à 134)
 
 function displayProductBasket(item) {
   const article = tagParentArticle(item);
@@ -125,12 +130,12 @@ function displayProductBasket(item) {
   displayTotalQuantity();
   displayTotalPrice();
   item.price = null;
-  saveBasket(item);
+  saveToLocalStorage(item);
 }
 
 // ******************************************** SECTION ID "#cart__items" ***********************************
 
-// Fonction section parent ID et création enfant <article> (ligne 113 à 115)
+// Fonction section parent ID et création enfant <article> (Ligne 140 à 142)
 
 function idParentArticle(article) {
   document.querySelector("#cart__items").appendChild(article);
@@ -138,7 +143,7 @@ function idParentArticle(article) {
 
 // ******************************************** TAG PARENT ARTICLE ********************************************
 
-// Fonction qui va créer la balise parent article. (ligne 121 à 127)
+// Fonction qui va créer la balise parent article. (Ligne 148 à 154)
 
 function tagParentArticle(item) {
   const article = document.createElement("article");
@@ -150,7 +155,7 @@ function tagParentArticle(item) {
 
 // ******************************************** DIV cart__item__img *******************************************
 
-//Fonction qui va créer une div puis une classe dans la balise <img>. (ligne 133 à 137)
+//Fonction qui va créer une div puis une classe dans la balise <img>. (Ligne 160 à 164)
 
 function divCartImg() {
   const divId = document.createElement("div");
@@ -160,7 +165,7 @@ function divCartImg() {
 
 // ********************************************** TAG IMAGE *************************************************
 
-// Fonction qui va fabriquer une balise <img> à l'intérieur de son parent #. (ligne 143 à 148)
+// Fonction qui va fabriquer une balise <img> à l'intérieur de son parent #. (Ligne 170 à 175)
 
 function tagImage(item) {
   const image = document.createElement("img");
@@ -172,7 +177,7 @@ function tagImage(item) {
 // ******************************************** DIV cart__item__content ***************************************
 
 // Fonction qui rappelle les fonctions dèja créer pour la création d'éléments.
-// Et fonction création d'enfants dans la div. (ligne 155 à 165)
+// Et fonction création d'enfants dans la div. (Ligne 182 à 192)
 
 function divCartContent(item) {
   const constCartContent = document.createElement("div");
@@ -189,7 +194,7 @@ function divCartContent(item) {
 // ******************************************** DIV cart__item__content__description ***************************
 
 // Fonction première enfant de la div (cart__item__content).
-//  Création des éléments <div>, <h2> et <p> et création des éléments enfants. (ligne 172 à 192)
+//  Création des éléments <div>, <h2> et <p> et création des éléments enfants. (Ligne 199 à 219)
 
 function divCartDescription(item) {
   const divCartItemContent = document.createElement("div");
@@ -217,7 +222,7 @@ function divCartDescription(item) {
 
 // Fonction div "cart__item__content__settings" parente des autres éléments
 //  Création des éléments <div>, <p> et <input> et ainsi que création des éléments enfants.
-//  // Fonction ajout ou retrait de valeur dans le panier. (ligne 200 à 225)
+// Fonction ajout ou retrait de valeur dans le panier. (Ligne 227 à 252)
 
 function divSettings(item) {
   const settings = document.createElement("div");
@@ -248,7 +253,7 @@ function divSettings(item) {
 
 // ************************************ DIV cart__item__content__settings__delete ****************************
 
-// Fonction création d'éléments ainsi que suppression d'éléments. (ligne 231 à 242)
+// Fonction création d'éléments ainsi que suppression d'éléments. (Ligne 258 à 269)
 
 function divSettingsDelete(settings, item) {
   const suppress = document.createElement("div");
@@ -265,7 +270,7 @@ function divSettingsDelete(settings, item) {
 
 // ******************************************** FONCTION REMOVE FROM BASKET *************************************
 
-// Fonction qui va servir à supprimer un éléments du panier. (ligne 248 à 258)
+// Fonction qui va servir à supprimer un éléments du panier. (Ligne 275 à 285)
 
 function deletFromBasket(item) {
   const productDelete = cart.findIndex(
@@ -281,7 +286,7 @@ function deletFromBasket(item) {
 
 // ********************************************** FONCTION REMOVE FROM PAGE ***********************************
 
-// Fonction qui va servir à supprimer un éléments de la page. (ligne 264 à 269)
+// Fonction qui va servir à supprimer un éléments de la page. (Ligne 291 à 296)
 
 function removeFromPageBasket(item) {
   const productRemove = document.querySelector(
@@ -290,19 +295,19 @@ function removeFromPageBasket(item) {
   productRemove.remove();
 }
 
-// ************************************************** TAG FORM ************************************************
-
-const orderButton = document.querySelector("#order");
-orderButton.addEventListener("click", (e) => submitForm(e));
-
 // *********************************************** SUBMIT FORM ************************************************
 
-/* Fonction qui va faire appel à la fonction fetch, rappeler d'autres fonctions pour :
+/* Fonction qui va faire appel à la fonction fetch pour récuper le numéro de commande,
+ * rappeler d'autres fonctions pour :
  * Éviter le raffrachissement de la page.
  * Envoyer un message retour sur le formulaire.
  * Retourner les champs du formulaire qui sont invalide.
  * Rappel de la fonction requestBody().
+ * Renvoie vers la page confirmation si tout est correct. (Ligne 309 à 345)
  */
+
+const orderButton = document.querySelector("#order");
+orderButton.addEventListener("click", (e) => submitForm(e));
 
 function submitForm(e) {
   e.preventDefault();
@@ -341,7 +346,7 @@ function submitForm(e) {
 
 // ******************************************* FONCTION REQUEST BODY *******************************************
 
-// Fonction qui va servir à saisir et récuperer les champs obligatoire du formulaire. (ligne 324 à 344)
+// Fonction qui va servir à saisir et récuperer les champs obligatoire du formulaire. (Ligne 351 à 371)
 
 function requestBody() {
   const form = document.querySelector(".cart__order__form");
@@ -367,7 +372,7 @@ function requestBody() {
 
 // ************************************************** FONCTION GET IDS *****************************************
 
-// Fonction pour récupérer uniquement le id sans la couleur du produit. (ligne 350 à 361)
+// Fonction pour récupérer uniquement le id sans la couleur du produit. (Ligne 377 à 388)
 
 function getIds() {
   const nbOfProducts = localStorage.length;
@@ -384,7 +389,7 @@ function getIds() {
 
 // *************************************** FONCTION FIRST NAME INVALID ****************************************
 
-// Fonction qui va retourner le champ firstName du formulaire s'il est invalide.
+// Fonction qui va retourner le champ firstName du formulaire s'il est invalide. (Ligne 394 à 403)
 
 function fNameInvalid() {
   const fName = document.querySelector("#firstName").value;
@@ -399,7 +404,7 @@ function fNameInvalid() {
 
 // *************************************** FONCTION LAST NAME INVALID ******************************************
 
-// Fonction qui va retourner le champ laststName du formulaire s'il est invalide.
+// Fonction qui va retourner le champ laststName du formulaire s'il est invalide. (Ligne 409 à 418)
 
 function lNameInvalid() {
   const lName = document.querySelector("#lastName").value;
@@ -414,7 +419,7 @@ function lNameInvalid() {
 
 // ************************************* FONCTION FIRST NAME INVALID ******************************************
 
-// Fonction qui va retourner les champs du formulaire qui sont invalide.
+// Fonction qui va retourner les champs du formulaire qui sont invalide. (Ligne 424 à 433)
 
 function formInvalid() {
   const inputs = document.querySelectorAll("input");
@@ -430,7 +435,7 @@ function formInvalid() {
 
 // ************************************** FONCTION EMAIL INVALID *******************************************
 
-// Fonction qui va retourner le champ email du formulaire s'il est invalide.
+// Fonction qui va retourner le champ email du formulaire s'il est invalide. (Ligne 440 à 449)
 
 function emailInvalid() {
   const email = document.querySelector("#email").value;
