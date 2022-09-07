@@ -31,7 +31,7 @@ fetch(`http://localhost:3000/api/products/${productId}`)
 // Fonction ajout de données. Ainsi que les fonctions qui ont servi à créer le body,
 // seront regrouper à l'intérieur de cette fonction.
 // Récupération de données à l'intérieur de la constante (logo).
-// Constantes qui récupere avec les informations de notre tableau produits. (Ligne 36 à 47)
+// Constante qui récupere avec les informations de notre tableau produits. (Ligne 36 à 47)
 
 function addData(logo) {
   const { altTxt, colors, description, imageUrl, name, price } = logo;
@@ -110,7 +110,7 @@ function chooseColors(colors) {
 // selon son ID mais avec une couleur différente. (Ligne 112 à 138)
 
 const button = document.querySelector("#addToCart");
-button.addEventListener("click", (e) => {
+button.addEventListener("click", () => {
   const color = document.querySelector("#colors").value;
   const quantity = document.querySelector("#quantity").value;
 
