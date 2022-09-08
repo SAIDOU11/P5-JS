@@ -268,6 +268,7 @@ function divSettings(item) {
   input.addEventListener("change", (e) => {
     item.quantity = Number(e.target.value);
     displayTotalQuantity();
+    displayTotalPrice();
     saveToLocalStorage(item);
   });
 

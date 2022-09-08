@@ -11,6 +11,7 @@ const productId = urlParams.get("id");
 //Conditions if () de variable (portée globale) qui vont aider à créer le stock dans le localStorage.
 
 if (productId != null) {
+  var valuePrice = "";
   var iURL = "";
   var altTEXT = "";
   var nameProd = "";
@@ -115,7 +116,9 @@ button.addEventListener("click", () => {
   const quantity = document.querySelector("#quantity").value;
 
   if (color == null || color === "" || quantity == null || quantity == 0) {
-    alert("SVP, choisissez une couleur et une quantité");
+    alert(
+      "Pour valider ce choix, veuillez choisir une quantité et une couleur s'il vous plaît."
+    );
     return;
   }
 
@@ -127,7 +130,7 @@ button.addEventListener("click", () => {
     color: color,
     quantity: Number(quantity),
     name: nameProd,
-    //  price: valuePrice,
+    price: valuePrice,
     imageUrl: iURL,
     altTxt: altTEXT,
   };
