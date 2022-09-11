@@ -11,7 +11,6 @@ const productId = urlParams.get("id");
 //Conditions if () de variable (portée globale) qui vont aider à créer le stock dans le localStorage.
 
 if (productId != null) {
-  var valuePrice = "";
   var iURL = "";
   var altTEXT = "";
   var nameProd = "";
@@ -121,6 +120,10 @@ button.addEventListener("click", () => {
     );
     return;
   }
+  if (quantity < 1 || quantity > 100) {
+    alert("Veuillez saisir une quantité entre 1 et 100");
+    return;
+  }
 
   const key = `${productId}-${color}`;
 
@@ -130,12 +133,30 @@ button.addEventListener("click", () => {
     color: color,
     quantity: Number(quantity),
     name: nameProd,
-    price: valuePrice,
     imageUrl: iURL,
     altTxt: altTEXT,
   };
 
-  localStorage.setItem(key, JSON.stringify(dataObject));
+  const product = JSON.parse(localStorage.getItem(key));
+  if (product) {
+    console.log("Le produit existe déjà");
+
+    console.log(product.quantity);
+    console.log(dataObject.quantity);
+    if (
+      product.quantity + dataObject.quantity > 0 &&
+      product.quantity + dataObject.quantity <= 100
+    ) {
+      dataObject.quantity = product.quantity + dataObject.quantity;
+      localStorage.setItem(key, JSON.stringify(dataObject));
+    } else {
+      alert("La quantité totale de votre produit ne peut pas dépasser 100.");
+      return;
+    }
+  } else {
+    console.log("Le produit n'existe pas");
+    localStorage.setItem(key, JSON.stringify(dataObject));
+  }
   alert("Votre produit a été ajouté au panier");
   window.location.href = "index.html";
 });

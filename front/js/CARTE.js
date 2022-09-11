@@ -7,7 +7,7 @@ const cart = [];
 // Fonction asynchrome afin d'attentre la réponse du fetch pour en ensuite récupérer le panier.
 //L'associer au localstorage.
 //(.parse) Pour transformer la chaine de caractère en tableau.
-// Récupération du même ID
+// Récupération du même ID afin de récupérer le prix du produit qui n'apparaît pas dans le localstorage.
 // Boucle forEach pour que chaque produit hérite de la fonction à son arriver dans le panier.
 // (Ligne 15 à 26)
 //Appel de la fonction. (Ligne 28)
@@ -52,16 +52,15 @@ function addBasket(id, item) {
   let findProduct = localStorage.length;
   findProduct = cart.find((product) => product.id == id);
   if (findProduct != undefined) {
-    findProduct.quantity++;
+    findProduct.quantity;
   } else {
     findProduct.quantity = 1;
   }
   findProduct.push(item);
   divSettings(item);
-  item.price = null;
   displayTotalPrice();
   displayTotalQuantity();
-  //updateTotalFinal(newValue, item, id);
+  updateTotalFinal(newValue, item, id);
   saveToLocalStorage(item);
 }
 
@@ -72,7 +71,14 @@ function addBasket(id, item) {
 // (Ligne 73 à 77)
 
 function saveToLocalStorage(item) {
-  saveUpdate = JSON.stringify(item);
+  const saveUpdate = JSON.stringify({
+    id: item.id,
+    altTxt: item.altTxt,
+    color: item.color,
+    imageUrl: item.imageUrl,
+    name: item.name,
+    quantity: item.quantity,
+  });
   const key = `${item.id}-${item.color}`;
   localStorage.setItem(key, saveUpdate);
 }
@@ -106,7 +112,7 @@ function displayTotalQuantity() {
 
 // Fonction créer pour le prix total du panier. Produit multiplier par sa quantité. (Ligne 108 à 118)
 
-function displayTotalPrice() {
+async function displayTotalPrice() {
   let total = 0;
   const totalPrice = document.querySelector("#totalPrice");
 
@@ -135,9 +141,6 @@ function updateTotalFinal(item, newValue, id) {
   totalQuantity.textContent = item.quantity;
 
   totalPrice.textContent = itemTotal;
-  displayTotalPrice();
-  displayTotalQuantity();
-  saveToLocalStorage(item);
 }
 
 // ******************************************** DISPLAY PRODUCT BASKET **************************************
@@ -153,10 +156,10 @@ function displayProductBasket(item) {
   divId.appendChild(image);
   article.appendChild(divId);
   article.appendChild(constCartContent);
+  // item.price = null;
   idParentArticle(article);
   displayTotalQuantity();
   displayTotalPrice();
-  item.price = null;
 }
 
 // ******************************************** SECTION ID "#cart__items" ***********************************
@@ -265,13 +268,19 @@ function divSettings(item) {
   input.type = "number";
 
   input.name = "itemQuantity";
-  input.min = "1";
-  input.max = "100";
+  input.min = 1;
+  input.max = 100;
   input.value = item.quantity;
   input.classList.add("itemQuantity");
 
   input.addEventListener("change", (e) => {
     item.quantity = Number(e.target.value);
+
+    if (item.quantity < 1 || item.quantity > 100) {
+      alert("Veuillez saisir une quantité entre 1 et 100");
+      return;
+    }
+
     displayTotalQuantity();
     displayTotalPrice();
     saveToLocalStorage(item);
@@ -314,11 +323,12 @@ function deletFromBasket(item) {
   displayTotalPrice();
   removeFromBasket(item);
   removeFromPageBasket(item);
+  saveToLocalStorage(item);
 }
 
 // ********************************************** FONCTION REMOVE FROM PAGE ***********************************
 
-// Fonction qui va servir à supprimer un éléments de la page. (Ligne 318 à 323)
+// Fonction qui va servir à supprimer un éléments de la page. (Ligne 315 à 320)
 
 function removeFromPageBasket(item) {
   const productRemove = document.querySelector(
@@ -335,7 +345,7 @@ function removeFromPageBasket(item) {
  * Envoyer un message retour sur le formulaire.
  * Retourner les champs du formulaire qui sont invalide.
  * Rappel de la fonction requestBody().
- * Renvoie vers la page confirmation si tout est correct. (Ligne 336 à 372)
+ * Renvoie vers la page confirmation si tout est correct. (Ligne 333 à 369)
  */
 
 const orderButton = document.querySelector("#order");
@@ -349,7 +359,12 @@ function submitForm(e) {
     return;
   }
 
-  validateInput();
+  fNameInvalid();
+  lNameInvalid();
+  cityInvalid();
+  emailInvalid();
+  addressInValid();
+  if (formInvalid()) return;
 
   const body = requestBody();
 
@@ -373,128 +388,9 @@ function submitForm(e) {
   });
 }
 
-// ******************************************* FORM VALIDATION *******************************************
-const setError = (element, message) => {
-  const inputControl = element.parentElement;
-  const errorDisplay = inputControl.querySelector(".error");
-
-  errorDisplay.innerText = message;
-  inputControl.classList.add("error");
-  inputControl.classList.remove("success");
-};
-
-const setSuccess = (element) => {
-  const inputControl = element.parentElement;
-  const errorDisplay = inputControl.querySelector(".error");
-
-  errorDisplay.innerText = "";
-  inputControl.classList.add("success");
-  inputControl.classList.remove("error");
-};
-
-const isEmailValid = (email) => {
-  /^[A-Za-z0-9+_.-]+@(.+)$/;
-  return re.test(String(email).toLowerCase());
-};
-
-const validateInput = () => {
-  const userFirstName = document.querySelector("#firstName");
-  const userLastName = document.querySelector("#lastName").value.trim();
-  const userInputs = document.querySelectorAll("input").trim();
-  const userEmail = document.querySelector("#email").value.trim();
-  const userAddress = document.querySelector("#address").value.trim();
-
-  const FirstName = userFirstNameFirstName.value.trim();
-  const LastName = userLastName.value.trim();
-  const inputs = userInputs.value.trim();
-  const email = userEmail.value.trim();
-  const adress = userAddress.value.trim();
-
-  if (userFirstName === "") {
-    setError(FirstName, "Veuillez entrez votre prénom s'il vous plait");
-  } else {
-    setSuccess(FirstName);
-  }
-
-  if (userLastName === "") {
-    setError(LastName, "Veuillez entrez votre nom s'il vous plait");
-  } else {
-    setSuccess(LastName);
-  }
-
-  if (userInputs === "") {
-    setError(inputs, "Veuillez remplir le formulaire s'il vous plait");
-  } else {
-    setSuccess(inputs);
-  }
-
-  if (userEmail === "") {
-    setError(
-      email,
-      "Veuillez entrez une adresse e-mail valide s'il vous plait"
-    );
-  } else if (!isEmailValid(emaila)) {
-    setSuccess(email);
-  }
-
-  if (userAddress === "") {
-    setError(adress, "Veuillez entrez votre adresse s'il vous plait");
-  } else {
-    setSuccess(adress);
-  }
-};
-
-// *************************************** FONCTION FIRST NAME INVALID ****************************************
-
-// Fonction qui va retourner le champ firstName du formulaire s'il est invalide. (Ligne 420 à 429)
-
-function fNameInvalid() {
-  const regex = /^[a-zA-Z ]+$/;
-
-  if (regex.trim(fName) === "") {
-    alert("veuillez entrez votre prénom s'il vous plait");
-    return true;
-  } else {
-    return false;
-  }
-}
-
-function lNameInvalid() {
-  const regex = /^[a-zA-Z ]+$/;
-  if (regex.test(lName) === false) {
-    alert("veuillez entrez des chaines de caractères s'il vous plait");
-    return true;
-  } else {
-    return false;
-  }
-}
-
-function formInvalid() {
-  inputs.forEach((input) => {
-    if (input.value === "") {
-      alert("veuillez remplir les champs obligatoires");
-      return true;
-    } else {
-      return false;
-    }
-  });
-}
-
-// Fonction qui va retourner le champ email du formulaire s'il est invalide. (Ligne 466 à 475)
-
-function emailInvalid() {
-  const regex = /^[A-Za-z0-9+_.-]+@(.+)$/;
-  if (regex.test(email) === false) {
-    alert("veuillez entrez une adresse email valide s'il vous plait");
-    return true;
-  } else {
-    return false;
-  }
-}
-
 // ******************************************* FONCTION REQUEST BODY *******************************************
 
-// Fonction qui va servir à saisir et récuperer les champs obligatoire du formulaire. (Ligne 378 à 398)
+// Fonction qui va servir à saisir et récuperer les champs obligatoire du formulaire. (Ligne 375 à 395)
 
 function requestBody() {
   const form = document.querySelector(".cart__order__form");
@@ -520,7 +416,7 @@ function requestBody() {
 
 // ************************************************** FONCTION GET IDS *****************************************
 
-// Fonction pour récupérer uniquement le id sans la couleur du produit. (Ligne 404 à 414)
+// Fonction pour récupérer uniquement le id sans la couleur du produit. (Ligne 401 à 411)
 
 function getIds() {
   const nbOfProducts = localStorage.length;
@@ -533,3 +429,117 @@ function getIds() {
   }
   return ids;
 }
+
+// *************************************** FONCTION FIRST NAME INVALID ****************************************
+
+// Fonction qui va retourner le champ firstName du formulaire s'il est invalide. (Ligne 417 à 426)
+
+function fNameInvalid() {
+  const fName = document.querySelector("#firstName").value;
+  const errorFirstName = document.querySelector("#firstNameErrorMsg");
+
+  if (fName.length === 0) {
+    errorFirstName.innerHTML = "Veuillez entrez votre prénom ";
+    return false;
+  }
+  if (!fName.match(/^[a-zA-Z ]+$/)) {
+    errorFirstName.innerHTML =
+      "Veuillez entrez votre prénom sans utilisez de chiffres";
+    return false;
+  }
+  errorFirstName.innerHTML = "Valide";
+  return true;
+}
+
+// *************************************** FONCTION LAST NAME INVALID ******************************************
+
+// Fonction qui va retourner le champ laststName du formulaire s'il est invalide. (Ligne 432 à 441)
+
+function lNameInvalid() {
+  const lName = document.querySelector("#lastName").value;
+  const errorLastName = document.querySelector("#lastNameErrorMsg");
+
+  if (lName.length === 0) {
+    errorLastName.innerHTML = "Veuillez entrez votre nom ";
+    return false;
+  }
+  if (!lName.match(/^[a-zA-Z ]+$/)) {
+    errorLastName.innerHTML =
+      "Veuillez entrez votre nom sans utilisez de chiffres";
+    return false;
+  }
+  errorLastName.innerHTML = "Valide";
+  return true;
+}
+
+// ************************************* FONCTION CITY INVALID ******************************************
+
+function cityInvalid() {
+  const city = document.querySelector("#city").value;
+  const errorCity = document.querySelector("#cityErrorMsg");
+
+  if (city.length === 0) {
+    errorCity.innerHTML = "Veuillez entrez votre Ville ";
+    return false;
+  }
+  if (!city.match(/^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/)) {
+    errorCity.innerHTML =
+      "Veuillez entrez votre Ville sans utilisez de chiffres où d'éspaces";
+    return false;
+  }
+  errorCity.innerHTML = "Valide";
+  return true;
+}
+// ************************************* FONCTION FORM INVALID ******************************************
+
+// Fonction qui va retourner les champs du formulaire qui sont invalide. (Ligne 447 à 457)
+
+function formInvalid() {
+  const order = document.querySelector("#order").value;
+
+  order.forEach((input) => {
+    if (input.value === "") {
+      setError(order, "Veuillez remplir le formulaire s'il vous plait");
+    } else {
+      setSuccess(order);
+    }
+  });
+}
+
+// ************************************** FONCTION EMAIL INVALID  *******************************************************
+
+// Fonction qui va retourner le champ email du formulaire s'il est invalide. (Ligne 463 à 472)
+
+function emailInvalid() {
+  const email = document.querySelector("#email").value;
+  const errorEmail = document.querySelector("#emailErrorMsg");
+
+  if (email.length === 0) {
+    errorEmail.innerHTML = "Veuillez entrez votre adresse mail ";
+    return false;
+  }
+  if (!email.match(/^[A-Za-z0-9+_.-]+@(.+)$/)) {
+    errorEmail.innerHTML = "Veuillez entrez une adresse mail valide";
+    return false;
+  }
+  errorEmail.innerHTML = "Valide";
+  return true;
+}
+
+function addressInValid() {
+  const userAddress = document.querySelector("#address").value;
+  const errorAddress = document.querySelector("#addressErrorMsg");
+
+  if (userAddress.length === 0) {
+    errorAddress.innerHTML = "Veuillez entrez une adresse";
+    return false;
+  }
+  if (!userAddress.match(/^\s*\S+(?:\s+\S+){2}/)) {
+    errorAddress.innerHTML = "Veuillez entrez une adresse valide";
+    return false;
+  }
+  errorAddress.innerHTML = "Valide";
+  return true;
+}
+
+// ************************************** *******************************************************
